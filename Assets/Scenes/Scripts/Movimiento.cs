@@ -7,12 +7,12 @@ public class Movimiento : MonoBehaviour
 {
     [SerializeField]private Vector2 posicion;    
     public Vector2 desplazar;
-    public Vector2 fuerza, sumatoria, friccion;
+    public Vector2 fuerza, sumatoria, friccion, resistencia, gravitatoria;
     public float masa=1;
     public float maximoY=4.5f, minimoY=-4.5f, maximoX=4.5f, minimoX=-4.5f;
     public Vector2 velocidad, aceleracion,peso;
     public Transform objetivo;
-    public float rebote, coeficiente=0.5f;
+    public float rebote, coeficiente=0.5f, coeficiente2, masa2;
     public bool bordes=true; 
     Vector2 velmax = new Vector2(15, 15);
     void Start()
@@ -32,6 +32,7 @@ public class Movimiento : MonoBehaviour
         desplazar.Draw(posicion,Color.cyan);
         Gravedad();
         Friccion();
+        //Resistencia();
         AplicarFuerza();        
         Walker();      
         //Rastreo();       
@@ -127,7 +128,7 @@ public class Movimiento : MonoBehaviour
     }
     public void AplicarFuerza()
     {        
-        sumatoria = fuerza + peso + friccion;       
+        sumatoria = fuerza + peso + friccion+ resistencia;       
         aceleracion = (sumatoria / masa);
     }
     
@@ -146,8 +147,17 @@ public class Movimiento : MonoBehaviour
     {
         aceleracion.x = objetivo.position.x- posicion.x;
         aceleracion.y = objetivo.position.y- posicion.y;
-
     }
+
+    public void OnTriggerStay2D(Collider2D collision)
+    {
+        Resistencia();
+    }
+    public void  Resistencia()
+    {        
+            float velocidadMag = velocidad.magnitude;
+            resistencia = -0.5f * velocidadMag * velocidadMag * coeficiente2 * velocidad.normalized; 
+    }    
     
     
 }
